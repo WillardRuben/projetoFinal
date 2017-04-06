@@ -1,6 +1,9 @@
 package classes;
 
-public class Endereco {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Endereco implements Serializable {
 	private String rua;
 	private int numero;
 	private String complemento;

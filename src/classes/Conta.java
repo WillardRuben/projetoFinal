@@ -1,12 +1,15 @@
 package classes;
 
+import java.io.Serializable;
+
 import colecoes.*;
 
-public class Conta {
+@SuppressWarnings("serial")
+public class Conta implements Serializable{
 	
-	private Integer numero;
+	private int numero;
 	private String senha;
-	private Double saldo;
+	private double saldo;
 	private ColecaoMovimentacoes movimentacoes;
 	
 	public Conta(int numero,String senha){
@@ -14,6 +17,17 @@ public class Conta {
 		this.senha = senha;
 	}
 	
+
+	@Override
+	public String toString() {
+		return "-----Conta----- "+ 
+				"\nNumero=" + numero + 
+				"\nSaldo=" + saldo + 
+				"\nMovimentacoes=" + movimentacoes;
+	}
+
+
+
 
 	public int getNumero() {
 		return numero;

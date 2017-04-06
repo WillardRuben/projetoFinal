@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -21,8 +22,7 @@ public class ColecaoClientes implements Serializable {
 	
 	ArrayList<Cliente> Clientes = new ArrayList<Cliente>();
 	
-	Set<Conta> tabeladeContas = new HashSet<Conta>();
-	
+	/*Método usado para adicionar cliente**/
 	public void AdicionaCliente(){
 		System.out.println("Nome do cliente: ");
 		String nome = Leitura.LeNome();
@@ -39,6 +39,7 @@ public class ColecaoClientes implements Serializable {
 		Cliente c = new Cliente(nome, cpf, endereco, nascimento, telefone, conta);
 		Clientes.add(c);
 	}
+	/**Utilizado para remover cliente pelo CPF*/
 	public void RemovePeloCPF(){
 		System.out.println("Cpf: ");
 		String cpf = Leitura.LeNome();
@@ -47,11 +48,15 @@ public class ColecaoClientes implements Serializable {
 		}
 		for(Cliente c: Clientes){
 			if(c.getCpf().equals(cpf)){
-				Clientes.remove(c);
+				try {
+					Clientes.remove(c);
+				} catch (ConcurrentModificationException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
-	
+	/**Método utilizado para pesquisar cliente pelo CPF*/
 	public Cliente PesquisaClientePeloCPF(){
 		Cliente cretorno=null;
 		System.out.println("Cpf: ");
@@ -66,25 +71,21 @@ public class ColecaoClientes implements Serializable {
 		}
 		return cretorno;
 	}
-	
+	/**Método utilizado para gera número da conta do cliente*/
 	public int geraNumeroConta(){
-		Random rand = new Random();
-		Integer num = rand.nextInt(tabeladeContas.size());
-		if(tabeladeContas.contains(num)){
-			geraNumeroConta();
-		}
-		return num;
+		Random numero = new Random();
+        int conta = 1 + numero.nextInt(9999);
+        return conta;
 	}
+	/**Método utilizado para salvar a lista de clientes*/
 	
-	public void AlteraDadosCliente(){
-		
-	}
 	public void Salvar(){
 		try {
+		
 			FileOutputStream arq = new FileOutputStream("clientes.dat");
 			ObjectOutputStream inClientes = new ObjectOutputStream(arq);
 			
-			inClientes.writeObject(Clientes);
+			inClientes.writeObject(this.Clientes);
 			
 			System.out.println("Lista de cliente salva!");
 			inClientes.close();
@@ -96,14 +97,16 @@ public class ColecaoClientes implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	
+	/**Metodo utilizado para listar os clientes salvos no arquivo*/
 	@SuppressWarnings("resource")
 	public void ListarClientesSalvos(){
 		
 		try {
-			FileInputStream in = new FileInputStream("clientes");
+			FileInputStream in = new FileInputStream("clientes.dat");
 			ObjectInputStream objIn = new ObjectInputStream(in);
 			
-			ColecaoClientes clientes = (ColecaoClientes)objIn.readObject();
+			Object clientes = objIn.readObject();
 			
 			System.out.println(clientes);
 			
@@ -113,11 +116,14 @@ public class ColecaoClientes implements Serializable {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (ClassCastException e){
+			e.printStackTrace();
 		}
 		
 		
 	}
 
+	/**Pesquisa o cliente pelo cpf*/
 	public Cliente pesquisaPelaConta(int numeroConta) {
 		Cliente cliente = null;
 		
@@ -132,18 +138,18 @@ public class ColecaoClientes implements Serializable {
 		}
 		return cliente;
 	}
-	public Cliente confirmaConta(Integer numero){
+	/**Associa a conta digitada a um dos cliente que está na lista*/
+	public Cliente confirmaConta(int numero){
 		Cliente cliente = null;
 		for(Cliente c: Clientes){
-			Integer num = c.getConta().getNumero();
-			if((num.equals(numero))){
+			int num = c.getConta().getNumero();
+			if((num==numero)){
 				System.out.println("Digite a senha da conta: ");
 				String senha = Leitura.LeNome();
 				if(c.getConta().getSenha().equals(senha)){
 					cliente = c;
 				}else{
-					System.out.println("Senha incorreta");
-					cliente = null;
+					System.out.println("Cliente não encontrado");
 				}
 			}			
 		}

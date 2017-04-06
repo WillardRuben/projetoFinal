@@ -11,18 +11,22 @@ import java.util.Date;
 import java.util.Scanner;
 import classes.*;
 
+
+/**Classe utilizada para implementar todos os métodos auxiliares*/
+@SuppressWarnings("unused")
 public class Leitura {
 
-	
+	 
+	@SuppressWarnings("resource")
 	public static String LeNome(){
 		Scanner in = new Scanner(System.in);
 		String nome = in.nextLine();
 		return nome;
 	}
 	
+	@SuppressWarnings("resource")
 	public static int leInteiroPositivo(){
 		Scanner in = new Scanner(System.in);
-		System.out.print("Digite um inteiro positivo: ");
 		int r=0;
 		do{
 			while(!in.hasNextInt()){
@@ -39,6 +43,7 @@ public class Leitura {
 		return r;
 	}
 	
+	@SuppressWarnings("resource")
 	public static Double LeDouble(){
 		Scanner in = new Scanner(System.in);
 		while(!in.hasNextDouble()){
@@ -50,6 +55,7 @@ public class Leitura {
 		return r;
 	}
 	
+	@SuppressWarnings("resource")
 	public static LocalDate LeData(){
 		LocalDate dateRetorna = null;
 		Scanner teclado = new Scanner(System.in);
@@ -69,6 +75,7 @@ public class Leitura {
 			
 	}
 	
+	@SuppressWarnings("resource")
 	public static Endereco criaEndereco(){
 		Scanner teclado = new Scanner(System.in);
 		System.out.println("Nome da rua: ");
@@ -83,7 +90,7 @@ public class Leitura {
 		
 		return end;
 	}
-	public static void menu(){
+	public void menu(){
 		System.out.println("--------------------");
 		System.out.println("--------Banco-------");
 		System.out.println("--------------------");
@@ -92,33 +99,45 @@ public class Leitura {
 		System.out.println("1- Adicionar Cliente");
 		System.out.println("2- Pesquisar cliente por CPF");
 		System.out.println("3- Listar todos os clientes salvos");
-		System.out.println("4- Lista de Clientes cadastrados nessa sessão");
-		System.out.println("5- Alterar dados de um cliente");
-		System.out.println("6- Excluir Cliente");
-		System.out.println("7- Acessar Conta");
+		System.out.println("4- Excluir Cliente");
+		System.out.println("5- Acessar Conta");
 		System.out.println("---------------------");
 		System.out.println("-----Funcionarios----");
-		System.out.println("8- Cadastrar Funcionário");
-		System.out.println("9- Pesquisar funcionario pela matricula");
-		System.out.println("10- Alterar dados de Funcionário");
-		System.out.println("11- Listar todos os funcionarios");		
+		System.out.println("6- Cadastrar Funcionário");
+		System.out.println("7- Pesquisar funcionario pela matricula");
+		System.out.println("8- Listar todos os funcionarios Salvos");
+		System.out.println("9- Remover Funcionário");
+		System.out.println("----------------------");
+		System.out.println("----------------------");
+		System.out.println("10- Salvar lista de Clientes");
+		System.out.println("11- Salvar lista de Funcionários");
 	}
-	public static void menuCliente(Cliente c,ColecaoClientes clientes){
+	
+	/**
+	 * Menu mostrado na área de acesso ao cliente*/
+	public void menuCliente(Cliente c,ColecaoClientes clientes){
 		System.out.println("-----Operações-----");
 		System.out.println("1- Consultar Saldo ");
 		System.out.println("2- Saque");
 		System.out.println("3- Transferência");
 		System.out.println("4- Depósito");
-		
+		System.out.println("5- sair");
+	}
+	
+	public void escolhaCliente(Cliente c,ColecaoClientes clientes){
 		int parada = 1 ;
 		Scanner teclado = new Scanner(System.in);
 		do{
-			menu();
 			System.out.println("Digite uma opção: ");
 			int opcao = teclado.nextInt();
+			teclado.nextLine();
 			switch(opcao){
 				case 1:
-					System.out.println("O saldo da conta é "+c.getConta().getSaldo());
+					try{
+						System.out.println("O saldo da conta é "+c.getConta().getSaldo());
+					}catch (NullPointerException e) {
+						System.out.println("Sem Saldo");
+					}
 					break;
 				case 2:
 					System.out.println("Valor: ");
@@ -145,15 +164,18 @@ public class Leitura {
 					break;
 				case 4:
 					System.out.println("Valor a ser depositado: ");
-					Double valorDeposito = LeDouble();
+					double valorDeposito = LeDouble();
 					try{
 						c.getConta().getMovimentacoes().deposito(c, valorDeposito);
-					}catch (Exception erroDeposito) {
-						System.out.println("Erro ao tentar fazer depósito");
+					}catch (NullPointerException e) {
+						System.out.println("Erro ao fazer depósito");
 					}
+					break;
+				case 5:
 					break;
 				default:
 					System.out.println("Digite uma opção válida");
+					break;
 			}
 			System.out.println("1 para continuar e 0 para sair: ");
 			parada = teclado.nextInt();
@@ -171,63 +193,70 @@ public class Leitura {
 		
 		teclado.close();
 	}
-	public static void escolha(){
+	public void escolha(){
 		int parada = 1 ;
 		Scanner teclado = new Scanner(System.in);
 		ColecaoClientes clientes = new ColecaoClientes();
 		ColecaoFuncionarios funcionarios = new ColecaoFuncionarios();
+
+		
 		do{
 			menu();
 			System.out.println("Digite uma opção: ");
 			int opcao = teclado.nextInt();
 			switch(opcao){
 				case 1:	 
-					try{
-						clientes.AdicionaCliente();
-					}catch (Exception erro_ao_adicionar_cliente) {
-						System.out.println("Erro ao adicionar cliente");
-					}
+					clientes.AdicionaCliente();
 					break;
 				case 2:
 					clientes.PesquisaClientePeloCPF();
 					break;
 				case 3:
-					clientes.ListarClientes();
+					clientes.ListarClientesSalvos();
 					break;
 				case 4:
-					clientes.ListarClientes();
-					break;
-				case 5:
-					clientes.AlteraDadosCliente();
-					break;
-				case 6:
 					clientes.RemovePeloCPF();
 					break;
-				case 7: 
+				case 5:
+					int stop = 1;
 					System.out.println("Digite o número da conta: ");
-					Integer numero = leInteiroPositivo();
+					int numero = leInteiroPositivo();
 					Cliente c;
 					c = clientes.confirmaConta(numero);
-					if(!(c.equals(null))){
+					do{
 						menuCliente(c,clientes);
-					}else{
-						System.out.println("Cliente não encontrado");
-					}
+						escolhaCliente(c, clientes);
+					
+						while(stop!=1&&stop!=0){
+							System.out.println("opção inválida digite novamente: ");
+							stop = teclado.nextInt();
+						}
+						if(stop==0&&stop!=1){
+							break;
+						}
+					}while(stop==1);
 					break;
-				case 8:
+				case 6:
 					funcionarios.AdicionaFuncionario();
 					break;
-				case 9:
+				case 7: 
 					funcionarios.PesquisaPelaMatricula();
 					break;
+				case 8:
+					funcionarios.ListarFuncionarios();
+					break;
+				case 9:
+					funcionarios.RemovePelaMatricula();
+					break;
 				case 10:
-					funcionarios.AlteraDadosPelaMatricula();
+					clientes.Salvar();
 					break;
 				case 11:
-					funcionarios.ListarFuncionarios();
+					funcionarios.SalvarColecaoFuncionarios();
 					break;
 				default:
 					System.out.println("Digite uma opção válida");
+					break;
 			}
 			
 			System.out.println("1 para continuar e 0 para sair: ");

@@ -7,11 +7,11 @@ import java.time.LocalDate;
 public class Pessoa implements Serializable{
 	
 	/**Atributos de pessoa*/
-	private String nome;
-	private String cpf;
-	private Endereco endereco;
-	private LocalDate nascimento;
-	private String telefone;
+	protected String nome;
+	protected String cpf;
+	protected Endereco endereco;
+	protected LocalDate nascimento;
+	protected String telefone;
 	
 	
 	
@@ -66,12 +66,12 @@ public class Pessoa implements Serializable{
 	@Override
 	public String toString() {
 		return "-----Pessoa-----" + 
-			   "Nome=" + nome + 
-			   "Cpf=" + cpf + 
-			   "Endereco=" + endereco +
-			   "Nascimento=" + nascimento + 
-			   "Telefone=" + telefone+
-			   "----------------";
+			   "\nNome=" + nome + 
+			   "\nCpf=" + cpf + 
+			   "\nEndereco=" + endereco +
+			   "\nNascimento=" + nascimento + 
+			   "\nTelefone=" + telefone+
+			   "\n----------------";
 	}
 
 	@Override
